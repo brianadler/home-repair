@@ -39,337 +39,291 @@ repairinteriorwallcount = 0
 repairfloorcount = 0
 serviceacequipmentcount = 0
 
-
-df["serviceheatingequipment"] = ((df.Q1 == "1") | ((df.Q2 == "1") & ((df.Q3 == "3") | (df.Q3 == "4"))))
-df["replaceheatingequipment"] = ((df.Q1 == "2") | ((df.Q2 == "2") & ((df.Q3 == "3") | (df.Q3 == "4"))))
-df["weatherization1"] = ((df.Q3 == "1") | (df.Q3 == "2"))
-df["serviceacequipment"] = ((df.Q4 == "1") | ((df.Q5 == "1") & (~df.weatherization1)))  # (df.Q3 == "3") | (df.Q3 =="4"))))
-df["replaceacequipment"] = ((df.Q4 == "2") | (df.Q4 == "4") & ((df.Q5 == "2") & (~df.weatherization1)) | (df.Q5 == "4"))
-df["serviceheatequipment"] = ((df.Q4 == "1") & ((df.Q2 == "3") | (df.Q2 == "4")))
+def check_serviceheatingequipment(x):
+    if x["Q1"] == "1": return True
+    if x["Q2"] == "1" and x["Q3"] == "3": return True
+    if x["Q2"] == "1" and x["Q3"] == "4": return True
+    return False
 
 
+def check_replaceheatingeuipment(x):
+    if x["Q1"] == "2": return True
+    if x["Q2"] == "2" and x["Q3"] == "3": return True
+    if x["Q2"] == "2" and x["Q3"] == "4": return True
+    return False
 
 
-#Below is the loop and all of the if conditions that will procure a cost estimate for each survey respondent
-for x in stringarr2:
-    #The line below looks at the second string entry in x. if we did x[0], we would look at the identifier instead
-    item = x[3]
-    squarefootage = float(x[1])
-    numfloors = float (x[2])
-    if item[0] == '1':
-        ec = ec + costs.serviceheatingequipment
-        serviceheatcount = serviceheatcount + 1
-    if item[0] == '2':
-        ec = ec + (costs.btu*squarefootage)
-        replaceheatcount = replaceheatcount + 1
-    #Doing a multiple check
-    if item[1] == '1' and item[2] == 3 and serviceheatcount == 0:
-        ec = ec + costs.serviceheatingequipment
-        serviceheatcount = serviceheatcount + 1
-    if item[1] == '1' and item[2] == 4 and serviceheatcount == 0:
-        ec = ec + costs.serviceheatingequipment
-        serviceheatcount = serviceheatcount + 1
-    if item[1] == '2' and item[2] == 3 and replaceheatcount == 0:
-        ec = ec + (costs.btu*squarefootage)
-        replaceheatcount = replaceheatcount + 1
-    if item[1] == '2' and item[2] == 4 and replaceheatcount == 0:
-        ec = ec + (costs.btu*squarefootage)
-        replaceheatcount = replaceheatcount + 1
-    if item[1] == '1' and item[2] == 1 and weatherizationcount == 0:
-        ec = ec + costs.weatherization1
-        weatherizationcount = weatherizationcount + 1
-    if item[1] == '1' and item[2] == 2 and weatherizationcount == 0:
-        ec = ec + costs.weatherization1
-        weatherizationcount = weatherizationcount + 1
-    if item[1] == '2' and item[2] == 1 and weatherizationcount == 0:
-        ec = ec + costs.weatherization1
-        weatherizationcount = weatherizationcount + 1
-    if item[1] == '2' and item[2] == 2 and weatherizationcount == 0:
-        ec = ec + costs.weatherization1
-        weatherizationcount = weatherizationcount + 1
-    if item[2] == '1' and weatherizationcount == 0:
-        ec = ec + costs.weatherization1
-    if item[2] == '2' and weatherizationcount == 0:
-        ec = ec + costs.weatherization1
+def check_weatherization1(x):
+    if x["Q3"] == "1": return True
+    if x["Q3"] == "2": return True
+    return False
 
-    if item[3] == '1' and serviceacequipmentcount == 0:
-        #print ("Service AC Equipment")
-        ec = ec + costs.serviceacequipment
-        serviceacequipmentcount = serviceacequipmentcount + 1
-    if item[3] == '2' and replaceacequipment == 0:
-       # print ("Replace/Install AC Equipment")
-        ec = ec + costs.replaceinstallacequipment
-        replaceacequipment = replaceacequipment + 1
-    if item[3] == '4' and replaceacequipment == 0:
-       # print ("Replace/Install AC Equipment")
-        ec = ec + costs.replaceinstallacequipment
-        replaceacequipment = replaceacequipment + 1
-    if item[4] == '1' and item[2] == '1' and weatherizationcount == 0:
-        ec = ec + costs.weatherization1
-        weatherizationcount = weatherizationcount + 1
-    if item[4] == '1' and item[2] == '2' and weatherizationcount == 0:
-        ec = ec + costs.weatherization1
-        weatherizationcount = weatherizationcount + 1
-    if item[4] == '1' and item[2] == '3' and serviceheatcount == 0:
-        ec = ec + costs.serviceheatingequipment
-        serviceheatcount = serviceheatcount + 1
-    if item[4] == '1' and item[2] == '4' and serviceheatcount == 0:
-        ec = ec + costs.serviceheatingequipment
-        serviceheatcount = serviceheatcount + 1
-    if item[4] == '2' and item[2] == '1' and weatherizationcount == 0:
-        ec = ec + costs.weatherization1
-        weatherizationcount = weatherizationcount + 1
-    if item[4] == '2' and item[2] == '2' and weatherizationcount == 0:
-        ec = ec + costs.weatherization1
-        weatherizationcount = weatherizationcount + 1
-    if item[4] == '2' and item[2] == '3':
-        ec = ec + replaceacequipment
-    if item[4] == '2' and item[2] == '4' and serviceheatcount == 0:
-        ec = ec + replaceacequipment
 
-    # Moving on to question bunch #2
-    if item[5] == '1':
-      #  print ("Wire Rooms for Electricity")
-        ec = ec + costs.wireforelectric
-    if item[5] == '2':
-       # print ("Wire Rooms for Electricity")
-        ec = ec + costs.wireforelectric
-    if item[6] == '1':
-        ec = ec + costs.installelectricplugs
-        electricplugcount = electricplugcount + 1
-    if item[6] == '2':
-        ec = ec + costs.installelectricplugs
-        electricplugcount = electricplugcount + 1
-    if item[7] == '1':
-        ec = ec + (costs.concealwiring * 1.5)
-    if item[7] == '2':
-        ec = ec + (costs.concealwiring * 3)
-    if item[8] == '1':
-        ec = ec + (costs.minorelectrical * 1.5)
-    if item[8] == '2':
-        ec = ec + (costs.minorelectrical * 3)
-    if item[9] == '1' and electricplugcount == 0:
-        ec = ec + costs.installelectricplugs
-        electricplugcount = electricplugcount + 1
-    if item[9] == '2' and electricplugcount == 0:
-        ec = ec + costs.installelectricplugs
-        electricplugcount = electricplugcount + 1
-    if item[10] == '1' and item[11] == '1' and upgradeelectriccount == 0:
-        ec = ec + costs.upgradelectricservice
-        upgradeelectriccount = upgradeelectriccount + 1
-    if item[10] == '1' and item[11] == '2' and replacebreakercount == 0:
-        ec = ec + costs.replacebreaker
-        replacebreakercount = replacebreakercount + 1
-    if item[10] == '2' and item[11] == '1' and upgradeelectriccount == 0:
-        ec = ec + costs.upgradelectricservice
-        upgradeelectriccount = upgradeelectriccount + 1
-    if item[10] == '2' and item[11] == '2' and replacebreakercount == 0:
-        ec = ec + costs.replacebreaker
-        replacebreakercount = replacebreakercount + 1
- 
-    # Moving on to question bunch #3
-    if item[12] == '1':
-        ec = ec + costs.moldremediation
-    if item[12] == '2':
-        ec = ec + costs.moldremediation
-    if item[13] == '1':
-        ec = ec + costs.repairtoilet
-    if item[13] == '2':
-        ec = ec + costs.repairtoilet
-    if item[14] == '1':
-        ec = ec + costs.replacepiping
-        replacepipingcount = replacepipingcount + 1
-    if item[14] == '2':
-        ec = ec + costs.replacepiping
-        replacepipingcount = replacepipingcount + 1
-    if item[15] == '1':
-        ec = ec + costs.replacewaterheater
-    if item[15] == '2':
-        ec = ec + costs.replacewaterheater
-    if item[16] == '1':
-        ec = ec + costs.snakeraugerline
-        snakeaugercount = snakeaugercount + 1
-    if item[16] == '2':
-        ec = ec + costs.repairsewerline
-    if item[17] == '1':
-        ec = ec + costs.snakeaugerdrane
-    if item[17] == '2' and replacepipingcount == 0:
-        ec = ec + costs.replacepiping
-        replacepipingcount = replacepipingcount + 1
-    if item[18] == '1' and snakeaugercount == 0:
-        ec = ec + costs.snakeaugerdrane
-        snakeaugercount = snakeaugercount + 1
-    if item[18] == '2' and replacepipingcount == 0:
-        ec = ec + costs.replacepiping
-        replacepipingcount = replacepipingcount + 1
-    if item[19] == '1':
-        ec = ec + costs.exterminatetermite
-        exterminatorcount = exterminatorcount + 1
-    if item[19] == '2':
-        ec = ec + costs.exterminatetermite
-        exterminatorcount = exterminatorcount + 1
-    if item[20] == '1':
-        ec = ec + costs.exterminaterodent
-    if item[20] == '2':
-        ec = ec + costs.exterminateseal
+def check_serviceacequipment(x):
+    if x["Q4"] == "1": return True
+    if x["Q5"] == "1" and x["Q3"] == "3": return True
+    if x["Q5"] == "1" and x["Q3"] == "4": return True
+    return False
 
-    # Question Block 4
-    if item[21] == '1':
-        ec = ec + costs.sealbasement
-    if item[21] == '2':
-        ec = ec + costs.sealbasement
-    if item[22] == '1':
-        ec = ec + costs.sealwindow
-    if item[22] == '2':
-        ec = ec + costs.sealwindow
-    if item[23] == '1':
-        roofsquarefootage = .05*(1.25*squarefootage)
-        ec = ec + (roofsquarefootage * costs.sealroofmultiplier)
-    if item[23] == '2':
-        roofsquarefootage = .05*(1.25*squarefootage)
-        ec = ec + (roofsquarefootage * costs.sealroofmultiplier)
-    if item[24] == '1' and replacepipingcount == 0:
-        ec = ec +costs.replacepiping
-        replacepipingcount = replacepipingcount + 1
-    if item[24] == '2' and replacepipingcount == 0:
-        ec = ec + costs.replacepiping
-        replacepipingcount = replacepipingcount + 1
-    if item[25] == '1':
-        ec = ec + costs.repairwallsreplacepiping
-    if item[25] == '2':
-        ec = ec + costs.repairwallsreplacepiping
-    if item[26] == '1':
-        ec = ec + costs.replacewaterheater
-    if item[26] == '2':
-        ec = ec + costs.replacewaterheater
-    if item[27] == '1' and replacepipingcount == 0:
-        ec = ec + costs.replacepiping
-        replacepipingcount = replacepipingcount + 1
-    if item[27] == '2' and replacepipingcount == 0:
-        ec = ec + costs.replacepiping
-        replacepipingcount = replacepipingcount + 1
-    if item[28] == '1' and snakeaugercount == 0:
-        ec = ec + costs.snakeaugerdrane
-        snakeaugercount = snakeaugercount + 1
-    if item[28] == '2' and snakeaugercount == 0:
-        ec = ec + costs.snakeaugerdrane
-        snakeaugercount = snakeaugercount + 1
 
-    # Question Block 5
-    if item[29] == '1':
-        basementwallarea = (sqrt(squarefootage/numfloors)) * 4
-        ec = ec + basementwallarea * costs.repairfoundationmultiplier
-    if item[29] == '2':
-        basementwallarea = (sqrt(squarefootage/numfloors)) * 4
-        ec = ec + basementwallarea * costs.repairfoundationmultiplier
-    if item[30] == '1':
-        ec = ec + costs.repairroof
-    if item[30] == '2':
-        ec = ec + costs.repairroof
-    if item[31] == '1':
-       roofarea = 1.25*(squarefootage/numfloors)
-       ec = ec + (roofarea * costs.replaceroofmaterialsmultiplier)
-    if item[31] == '2':
-       roofarea = 1.25*(squarefootage/numfloors)
-       ec = ec + (roofarea * costs.replaceroofmaterialsmultiplier)
-    if item[32] == '1':
-       roofarea = 1.25*(squarefootage/numfloors)
-       ec = ec + (roofarea * costs.replaceroofmultiplier)
-    if item[32] == '2':
-        roofarea = 1.25*(squarefootage/numfloors)
-        ec = ec + (roofarea * costs.replaceroofmultiplier)
-    if item[33] == '1':
-        ec = ec + costs.replacegutters
-    if item[33] == '2':
-        ec = ec + costs.replacegutters
-    if item[34] == '1':
-        ec = ec + costs.tuckpointing
-    if item[34] == '2':
-        ec = ec + costs.tuckpointing
-    if item[35] == '1':
-        ec = ec + costs.repainting
-        repaintingcount = repaintingcount+1
-    if item[35] == '2':
-        ec = ec + costs.repainting
-        repaintingcount = repaintingcount+1
-    if item[36] == '1':
-        ec = ec + (squarefootage * costs.replaceexteriorwallmultiplier)
-    if item[36] == '2':
-        ec = ec + (squarefootage * costs.replaceexteriorwallmultiplier)
-    if item[37] == '1':
-        ec = ec + costs.replacewindow
-    if item[37] == '2':
-        ec = ec + costs.replacewindow
+def check_replaceacequipment(x):
+    if x["Q4"] == "2": return True
+    if x["Q4"] == "4": return True
+    if x["Q5"] == "2" and x["Q3"] == "3": return True
+    if x["Q5"] == "2" and x["Q3"] == "4": return True
+    return False
 
-    # Question Block 6
-    if item[38] == '1':
-        ec = ec + costs.repairfloor
-        repairfloorcount = repairfloorcount + 1
-    if item[38] == '2':
-        ec = ec + costs.repairfloor
-        repairfloorcount = repairfloorcount + 1
-    if item[39] == '1':
-        ec = ec + costs.repairinteriorwall
-        repairinteriorwallcount = repairinteriorwallcount + 1
-    if item[39] == '2':
-        ec = ec + costs.repairinteriorwall
-        repairinteriorwallcount = repairinteriorwallcount + 1
-    if item[40] == '1' and repaintingcount == 0:
-        ec = ec + costs.repainting
-        repaintingcount = repaintingcount+1
-    if item[40] == '2' and repaintingcount == 0:
-        ec = ec + costs.repainting
-        repaintingcount=repaintingcount+1
-    if item[41] == '1' and repairinteriorwallcount == 0:
-        ec = ec + costs.repairinteriorwall
-        repairinteriorwallcount = repairinteriorwallcount + 1
-    if item[41] == '2' and repairinteriorwallcount == 0:
-        ec = ec + costs.repairinteriorwall
-        repairinteriorwallcount = repairinteriorwallcount + 1
-    if item[42] == '1':
-        ec = ec + costs.repaintingwindowsashes
-    if item[42] == '2':
-        ec = ec + costs.repaintingwindowsashes
-    if item[43] == '1' and repairfloorcount == 0:
-        ec = ec + costs.repairfloor
-        repairfloorcount = repairfloorcount + 1
-    if item[43] == '2' and repairfloorcount == 0:
-        ec = ec + costs.repairfloor
-        repairfloorcount = repairfloorcount + 1
-    if item[44] == '1':
-        ec = ec + costs.repairfloortoiletsink
-    if item[44] == '2':
-        ec = ec + costs.repairfloortoiletsink
-    if item[45] == '1':
-        ec = ec + costs.replaceinstalllocks
-    if item[45] == '2':
-        ec = ec + costs.replaceinstalllocks
 
-    # Question Block 7
-    if item[46] == '1':
-        ec = ec + costs.treeremovalpruning
-    if item[46] == '2':
-        ec = ec + costs.treeremovalpruning
-    if item[47] == '1':
-        ec = ec + costs.repairexternalwalkway
-    if item[47] == '2':
-        ec = ec + costs.repairexternalwalkway
-    if item[48] == '1':
-        ec = ec + costs.repairpatio
-    if item[48] == '2':
-        ec = ec + costs.repairpatio
-    if item[49] == '1':
-        ec = ec + costs.repairporchdeck
-    if item[49] == '2':
-        ec = ec + costs.repairporchdeck
-    if item[50] == '1':
-        ec = ec + costs.repairexternalstairway
-    if item[50] == '2':
-        ec = ec + costs.repairexternalstairway
-    if item[51] == '1':
-        ec = ec + costs.repairadditionalstructure
-    if item[51] == '2':
-        ec = ec + costs.repairadditionalstructure
+def check_wireforelectric(x):
+    if x["Q6"] == "1": return True
+    if x["Q6"] == "2": return True
+    return False
+
+
+def check_installelectricplugs(x):
+    if x["Q7"] == '1': return True
+    if x["Q7"] == '2': return True
+    if x["Q10"] == '1': return True
+    if x["Q10"] == '2': return True
+    return False
+
+
+def check_concealwiring(x):
+    if x["Q8"] == '1': return True # multiplier
+    if x["Q8"] == '2': return True
+    return False
+
+
+def check_minorelectrical(x):
+    if x["Q9"] == '1': return True # ec = ec + (costs.minorelectrical * 1.5)
+    if x["Q9"] == '2': return True # ec = ec + (costs.minorelectrical * 3)
+    return False
+
+
+def check_upgradeelectricservice(x):
+    if x["Q11"] == '1' and x["Q12"] == '1': return True
+    if x["Q11"] == '2' and x["Q12"] == '1': return True
+    return False
+
+
+def check_replacebreaker(x):
+    if x["Q11"] == '1' and x["Q12"] == '2': return True
+    if x["Q11"] == '2' and x["Q12"] == '2': return True
+    return False
+
+
+def check_moldremediation(x):
+    if x["Q13"] == '1': return True
+    if x["Q13"] == '2': return True
+    return False
+
+
+def check_repairtoilet(x):
+    if x["Q14"] == '1': return True
+    if x["Q14"] == '2': return True
+    return False
+
+
+def check_replacepiping(x):
+    if x["Q15"] == '1': return True
+    if x["Q15"] == '2': return True
+    if x["Q18"] == '2': return True
+    if x["Q19"] == '2': return True
+    return False
+
+
+def check_replacewaterheater(x):
+    if x["Q16"] == '1': return True
+    if x["Q16"] == '2': return True
+    return False
+
+
+def check_snakeaugerline(x):
+    if x["Q17"] == '1': return True
+    return False
+
+
+def check_repairsewerline(x):
+    if x["Q17"] == '2': return True
+    return False
+
+
+def check_snakeaugerdrane(x):
+    if x["Q18"] == '1': return True
+    if x["Q19"] == '1': return True
+    return False
+
+
+def check_exterminatetermite(x):
+    if x["Q20"] == '1': return True
+    return False
+
+
+if x["Q20"] == '2':
+    ec = ec + costs.exterminatetermite
+    exterminatorcount = exterminatorcount + 1
+if x["Q21"] == '1':
+    ec = ec + costs.exterminaterodent
+if x["Q21"] == '2':
+    ec = ec + costs.exterminateseal
+
+# Question Block 4
+if x["Q22"] == '1':
+    ec = ec + costs.sealbasement
+if x["Q22"] == '2':
+    ec = ec + costs.sealbasement
+if x["Q23"] == '1':
+    ec = ec + costs.sealwindow
+if x["Q23"] == '2':
+    ec = ec + costs.sealwindow
+if x["Q24"] == '1':
+    roofsquarefootage = .05*(1.25*squarefootage)
+    ec = ec + (roofsquarefootage * costs.sealroofmultiplier)
+if x["Q24"] == '2':
+    roofsquarefootage = .05*(1.25*squarefootage)
+    ec = ec + (roofsquarefootage * costs.sealroofmultiplier)
+if x["Q25"] == '1' and replacepipingcount == 0:
+    ec = ec +costs.replacepiping
+    replacepipingcount = replacepipingcount + 1
+if x["Q25"] == '2' and replacepipingcount == 0:
+    ec = ec + costs.replacepiping
+    replacepipingcount = replacepipingcount + 1
+if x["Q26"] == '1':
+    ec = ec + costs.repairwallsreplacepiping
+if x["Q26"] == '2':
+    ec = ec + costs.repairwallsreplacepiping
+if x["Q27"] == '1':
+    ec = ec + costs.replacewaterheater
+if x["Q27"] == '2':
+    ec = ec + costs.replacewaterheater
+if x["Q28"] == '1' and replacepipingcount == 0:
+    ec = ec + costs.replacepiping
+    replacepipingcount = replacepipingcount + 1
+if x["Q28"] == '2' and replacepipingcount == 0:
+    ec = ec + costs.replacepiping
+    replacepipingcount = replacepipingcount + 1
+if x["Q29"] == '1' and snakeaugercount == 0:
+    ec = ec + costs.snakeaugerdrane
+    snakeaugercount = snakeaugercount + 1
+if x["Q29"] == '2' and snakeaugercount == 0:
+    ec = ec + costs.snakeaugerdrane
+    snakeaugercount = snakeaugercount + 1
+
+# Question Block 5
+if x["Q30"] == '1':
+    basementwallarea = (sqrt(squarefootage/numfloors)) * 4
+    ec = ec + basementwallarea * costs.repairfoundationmultiplier
+if x["Q30"] == '2':
+    basementwallarea = (sqrt(squarefootage/numfloors)) * 4
+    ec = ec + basementwallarea * costs.repairfoundationmultiplier
+if x["Q31"] == '1':
+    ec = ec + costs.repairroof
+if x["Q31"] == '2':
+    ec = ec + costs.repairroof
+if x["Q32"] == '1':
+    roofarea = 1.25*(squarefootage/numfloors)
+    ec = ec + (roofarea * costs.replaceroofmaterialsmultiplier)
+if x["Q32"] == '2':
+    roofarea = 1.25*(squarefootage/numfloors)
+    ec = ec + (roofarea * costs.replaceroofmaterialsmultiplier)
+if x["Q33"] == '1':
+    roofarea = 1.25*(squarefootage/numfloors)
+    ec = ec + (roofarea * costs.replaceroofmultiplier)
+if x["Q33"] == '2':
+    roofarea = 1.25*(squarefootage/numfloors)
+    ec = ec + (roofarea * costs.replaceroofmultiplier)
+if x["Q34"] == '1':
+    ec = ec + costs.replacegutters
+if x["Q34"] == '2':
+    ec = ec + costs.replacegutters
+if x["Q35"] == '1':
+    ec = ec + costs.tuckpointing
+if x["Q35"] == '2':
+    ec = ec + costs.tuckpointing
+if x["Q36"] == '1':
+    ec = ec + costs.repainting
+    repaintingcount = repaintingcount+1
+if x["Q36"] == '2':
+    ec = ec + costs.repainting
+    repaintingcount = repaintingcount+1
+if x["Q37"] == '1':
+    ec = ec + (squarefootage * costs.replaceexteriorwallmultiplier)
+if x["Q37"] == '2':
+    ec = ec + (squarefootage * costs.replaceexteriorwallmultiplier)
+if x["Q38"] == '1':
+    ec = ec + costs.replacewindow
+if x["Q38"] == '2':
+    ec = ec + costs.replacewindow
+
+# Question Block 6
+if x["Q39"] == '1':
+    ec = ec + costs.repairfloor
+    repairfloorcount = repairfloorcount + 1
+if x["Q39"] == '2':
+    ec = ec + costs.repairfloor
+    repairfloorcount = repairfloorcount + 1
+if x["Q40"] == '1':
+    ec = ec + costs.repairinteriorwall
+    repairinteriorwallcount = repairinteriorwallcount + 1
+if x["Q40"] == '2':
+    ec = ec + costs.repairinteriorwall
+    repairinteriorwallcount = repairinteriorwallcount + 1
+if x["Q41"] == '1' and repaintingcount == 0:
+    ec = ec + costs.repainting
+    repaintingcount = repaintingcount+1
+if x["Q41"] == '2' and repaintingcount == 0:
+    ec = ec + costs.repainting
+    repaintingcount=repaintingcount+1
+if x["Q42"] == '1' and repairinteriorwallcount == 0:
+    ec = ec + costs.repairinteriorwall
+    repairinteriorwallcount = repairinteriorwallcount + 1
+if x["Q42"] == '2' and repairinteriorwallcount == 0:
+    ec = ec + costs.repairinteriorwall
+    repairinteriorwallcount = repairinteriorwallcount + 1
+if x["Q43"] == '1':
+    ec = ec + costs.repaintingwindowsashes
+if x["Q43"] == '2':
+    ec = ec + costs.repaintingwindowsashes
+if x["Q44"] == '1' and repairfloorcount == 0:
+    ec = ec + costs.repairfloor
+    repairfloorcount = repairfloorcount + 1
+if x["Q44"] == '2' and repairfloorcount == 0:
+    ec = ec + costs.repairfloor
+    repairfloorcount = repairfloorcount + 1
+if x["Q45"] == '1':
+    ec = ec + costs.repairfloortoiletsink
+if x["Q45"] == '2':
+    ec = ec + costs.repairfloortoiletsink
+if x["Q46"] == '1':
+    ec = ec + costs.replaceinstalllocks
+if x["Q46"] == '2':
+    ec = ec + costs.replaceinstalllocks
+
+# Question Block 7
+if x["Q47"] == '1':
+    ec = ec + costs.treeremovalpruning
+if x["Q47"] == '2':
+    ec = ec + costs.treeremovalpruning
+if x["Q48"] == '1':
+    ec = ec + costs.repairexternalwalkway
+if x["Q48"] == '2':
+    ec = ec + costs.repairexternalwalkway
+if x["Q48"] == '1':
+    ec = ec + costs.repairpatio
+if x["Q48"] == '2':
+    ec = ec + costs.repairpatio
+if x["Q50"] == '1':
+    ec = ec + costs.repairporchdeck
+if x["Q50"] == '2':
+    ec = ec + costs.repairporchdeck
+if x["Q51"] == '1':
+    ec = ec + costs.repairexternalstairway
+if x["Q51"] == '2':
+    ec = ec + costs.repairexternalstairway
+if x["Q52"] == '1':
+    ec = ec + costs.repairadditionalstructure
+if x["Q52"] == '2':
+    ec = ec + costs.repairadditionalstructure
 
     serviceheatcount = 0
     replaceheatcount = 0
@@ -392,6 +346,11 @@ for x in stringarr2:
     ec = 0
 
 outputdf = pd.DataFrame(stringarr2)
+
+## Set Columns
+df["serviceheatingequipment"] = df.apply(check_serviceheatingequipment, axis=1)
+df["replaceheatingequipment"] = df.apply(check_replaceheatingeuipment, axis=1)
+df["weatherization1"] = df.apply(check_weatherization1, axis=1)
 
 xlsxfile = 'CEOutput.xls'
 excel_writer = pd.ExcelWriter(xlsxfile, engine='xlsxwriter')
