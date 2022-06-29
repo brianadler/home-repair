@@ -56,6 +56,76 @@ for x in stringarr2:
     item = x[3]
     squarefootage = float(x[1])
     numfloors = float (x[2])
+    if item[0] == '1':
+        ec = ec + costs.serviceheatingequipment
+        serviceheatcount = serviceheatcount + 1
+    if item[0] == '2':
+        ec = ec + (costs.btu*squarefootage)
+        replaceheatcount = replaceheatcount + 1
+    #Doing a multiple check
+    if item[1] == '1' and item[2] == 3 and serviceheatcount == 0:
+        ec = ec + costs.serviceheatingequipment
+        serviceheatcount = serviceheatcount + 1
+    if item[1] == '1' and item[2] == 4 and serviceheatcount == 0:
+        ec = ec + costs.serviceheatingequipment
+        serviceheatcount = serviceheatcount + 1
+    if item[1] == '2' and item[2] == 3 and replaceheatcount == 0:
+        ec = ec + (costs.btu*squarefootage)
+        replaceheatcount = replaceheatcount + 1
+    if item[1] == '2' and item[2] == 4 and replaceheatcount == 0:
+        ec = ec + (costs.btu*squarefootage)
+        replaceheatcount = replaceheatcount + 1
+    if item[1] == '1' and item[2] == 1 and weatherizationcount == 0:
+        ec = ec + costs.weatherization1
+        weatherizationcount = weatherizationcount + 1
+    if item[1] == '1' and item[2] == 2 and weatherizationcount == 0:
+        ec = ec + costs.weatherization1
+        weatherizationcount = weatherizationcount + 1
+    if item[1] == '2' and item[2] == 1 and weatherizationcount == 0:
+        ec = ec + costs.weatherization1
+        weatherizationcount = weatherizationcount + 1
+    if item[1] == '2' and item[2] == 2 and weatherizationcount == 0:
+        ec = ec + costs.weatherization1
+        weatherizationcount = weatherizationcount + 1
+    if item[2] == '1' and weatherizationcount == 0:
+        ec = ec + costs.weatherization1
+    if item[2] == '2' and weatherizationcount == 0:
+        ec = ec + costs.weatherization1
+
+    if item[3] == '1' and serviceacequipmentcount == 0:
+        #print ("Service AC Equipment")
+        ec = ec + costs.serviceacequipment
+        serviceacequipmentcount = serviceacequipmentcount + 1
+    if item[3] == '2' and replaceacequipment == 0:
+       # print ("Replace/Install AC Equipment")
+        ec = ec + costs.replaceinstallacequipment
+        replaceacequipment = replaceacequipment + 1
+    if item[3] == '4' and replaceacequipment == 0:
+       # print ("Replace/Install AC Equipment")
+        ec = ec + costs.replaceinstallacequipment
+        replaceacequipment = replaceacequipment + 1
+    if item[4] == '1' and item[2] == '1' and weatherizationcount == 0:
+        ec = ec + costs.weatherization1
+        weatherizationcount = weatherizationcount + 1
+    if item[4] == '1' and item[2] == '2' and weatherizationcount == 0:
+        ec = ec + costs.weatherization1
+        weatherizationcount = weatherizationcount + 1
+    if item[4] == '1' and item[2] == '3' and serviceheatcount == 0:
+        ec = ec + costs.serviceheatingequipment
+        serviceheatcount = serviceheatcount + 1
+    if item[4] == '1' and item[2] == '4' and serviceheatcount == 0:
+        ec = ec + costs.serviceheatingequipment
+        serviceheatcount = serviceheatcount + 1
+    if item[4] == '2' and item[2] == '1' and weatherizationcount == 0:
+        ec = ec + costs.weatherization1
+        weatherizationcount = weatherizationcount + 1
+    if item[4] == '2' and item[2] == '2' and weatherizationcount == 0:
+        ec = ec + costs.weatherization1
+        weatherizationcount = weatherizationcount + 1
+    if item[4] == '2' and item[2] == '3':
+        ec = ec + replaceacequipment
+    if item[4] == '2' and item[2] == '4' and serviceheatcount == 0:
+        ec = ec + replaceacequipment
 
     # Moving on to question bunch #2
     if item[5] == '1':
