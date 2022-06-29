@@ -131,7 +131,6 @@ dmypy.json
 
 # data files
 *.xlsx
-*.csv
 
 # Mac
 *.DS_Store
