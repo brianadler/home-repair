@@ -1,10 +1,6 @@
 from cmath import sqrt
-from tkinter import Y
-from tokenize import String
 import pandas as pd
-import os
-import math
-import numpy
+import numpy as np 
 
 #Read in second file with square footage and num of stories tied to survey ID
 file_name = "EXCEL_Survey 1 Returns Dataset_ALL.xlsx"
@@ -12,8 +8,9 @@ sheet = "S1_583_RETURNS"
 answerkey = pd.read_excel(f"data/{file_name}", dtype=str, index_col="Survey_ID", sheet_name=sheet)
 costs = pd.read_csv("data/costs.csv", index_col=0, squeeze=True)
 
-df=pd.DataFrame(answerkey, columns=['Survey_ID','building_square_footage', 'building_stories', 'Combined', 'EstCost'])
-
+#df=pd.DataFrame(answerkey, columns=['Survey_ID','building_square_footage', 'building_stories', 'Combined', 'EstCost'])
+df = answerkey
+df["building_square_footage"] = pd.to_numeric(df["building_square_footage"])
 
 #Convert dataframes to a single dimensional array
 arr = df.to_numpy()
@@ -42,25 +39,30 @@ repairinteriorwallcount = 0
 repairfloorcount = 0
 serviceacequipmentcount = 0
 
+
+df["serviceheatingequipment"] = ((df.Q1 == "1") | ((df.Q2 == "1") & ((df.Q3 == "3") | (df.Q3 == "4"))))
+df["replaceheatingequipment"] = ((df.Q1 == "2") | ((df.Q2 == "2") & ((df.Q3 == "3") | (df.Q3 == "4"))))
+
+
 #Below is the loop and all of the if conditions that will procure a cost estimate for each survey respondent
 for x in stringarr2:
     #The line below looks at the second string entry in x. if we did x[0], we would look at the identifier instead
     item = x[3]
     squarefootage = float(x[1])
     numfloors = float (x[2])
-    if item[0] == '1':
-        ec = ec + costs.serviceheatingequipment
-        serviceheatcount = serviceheatcount + 1
-    if item[0] == '2':
-        ec = ec + (costs.btu*squarefootage)
-        replaceheatcount = replaceheatcount + 1
-    #Doing a multiple check
-    if item[1] == '1' and item[2] == 3 and serviceheatcount == 0:
-        ec = ec + costs.serviceheatingequipment
-        serviceheatcount = serviceheatcount + 1
-    if item[1] == '1' and item[2] == 4 and serviceheatcount == 0:
-        ec = ec + costs.serviceheatingequipment
-        serviceheatcount = serviceheatcount + 1
+    # if item[0] == '1':
+    #     ec = ec + costs.serviceheatingequipment
+    #     serviceheatcount = serviceheatcount + 1
+    # if item[0] == '2':
+    #     ec = ec + (costs.btu*squarefootage)
+    #     replaceheatcount = replaceheatcount + 1
+    # #Doing a multiple check
+    # if item[1] == '1' and item[2] == 3 and serviceheatcount == 0:
+    #     ec = ec + costs.serviceheatingequipment
+    #     serviceheatcount = serviceheatcount + 1
+    # if item[1] == '1' and item[2] == 4 and serviceheatcount == 0:
+    #     ec = ec + costs.serviceheatingequipment
+    #     serviceheatcount = serviceheatcount + 1
     if item[1] == '2' and item[2] == 3 and replaceheatcount == 0:
         ec = ec + (costs.btu*squarefootage)
         replaceheatcount = replaceheatcount + 1
@@ -377,7 +379,7 @@ for x in stringarr2:
     repairfloorcount = 0
 
     #Leave out the imaginary number portion of the estimated cost with.real
-    if numpy.isnan(ec):
+    if np.isnan(ec):
         ec = 0
     x[4] = float(ec.real)
     TotalCost = TotalCost + ec
