@@ -40,6 +40,7 @@ exterminatorcount = 0
 repaintingcount=0
 repairinteriorwallcount = 0
 repairfloorcount = 0
+serviceacequipmentcount = 0
 
 #Below is the loop and all of the if conditions that will procure a cost estimate for each survey respondent
 for x in stringarr2:
@@ -83,10 +84,10 @@ for x in stringarr2:
     if item[2] == '2' and weatherizationcount == 0:
         ec = ec + costs.weatherization1
 
-    if item[3] == '1' and serviceacequipment == 0:
+    if item[3] == '1' and serviceacequipmentcount == 0:
         #print ("Service AC Equipment")
-        ec = ec + serviceacequipment
-        serviceacequipment = serviceacequipment + 1
+        ec = ec + costs.serviceacequipment
+        serviceacequipmentcount = serviceacequipmentcount + 1
     if item[3] == '2' and replaceacequipment == 0:
        # print ("Replace/Install AC Equipment")
         ec = ec + costs.replaceinstallacequipment
@@ -102,10 +103,10 @@ for x in stringarr2:
         ec = ec + costs.weatherization1
         weatherizationcount = weatherizationcount + 1
     if item[4] == '1' and item[2] == '3' and serviceheatcount == 0:
-        ec = ec + serviceacequipment
+        ec = ec + costs.serviceheatingequipment
         serviceheatcount = serviceheatcount + 1
     if item[4] == '1' and item[2] == '4' and serviceheatcount == 0:
-        ec = ec + serviceacequipment
+        ec = ec + costs.serviceheatingequipment
         serviceheatcount = serviceheatcount + 1
     if item[4] == '2' and item[2] == '1' and weatherizationcount == 0:
         ec = ec + costs.weatherization1
