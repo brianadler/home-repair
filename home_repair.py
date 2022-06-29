@@ -42,7 +42,7 @@ serviceacequipmentcount = 0
 
 df["serviceheatingequipment"] = ((df.Q1 == "1") | ((df.Q2 == "1") & ((df.Q3 == "3") | (df.Q3 == "4"))))
 df["replaceheatingequipment"] = ((df.Q1 == "2") | ((df.Q2 == "2") & ((df.Q3 == "3") | (df.Q3 == "4"))))
-
+df["weatherization1"] = ((df.Q2 == "1") | ((df.Q2 == "2") & ((df.Q3 == "1") | (df.Q3 == "2"))))
 
 #Below is the loop and all of the if conditions that will procure a cost estimate for each survey respondent
 for x in stringarr2:
@@ -51,7 +51,8 @@ for x in stringarr2:
     squarefootage = float(x[1])
     numfloors = float (x[2])
     # if item[0] == '1':
-    #     ec = ec + costs.serviceheatingequipment
+    #     ec = ec + costs.serviceh
+    # eatingequipment
     #     serviceheatcount = serviceheatcount + 1
     # if item[0] == '2':
     #     ec = ec + (costs.btu*squarefootage)
@@ -63,28 +64,28 @@ for x in stringarr2:
     # if item[1] == '1' and item[2] == 4 and serviceheatcount == 0:
     #     ec = ec + costs.serviceheatingequipment
     #     serviceheatcount = serviceheatcount + 1
-    if item[1] == '2' and item[2] == 3 and replaceheatcount == 0:
-        ec = ec + (costs.btu*squarefootage)
-        replaceheatcount = replaceheatcount + 1
-    if item[1] == '2' and item[2] == 4 and replaceheatcount == 0:
-        ec = ec + (costs.btu*squarefootage)
-        replaceheatcount = replaceheatcount + 1
-    if item[1] == '1' and item[2] == 1 and weatherizationcount == 0:
-        ec = ec + costs.weatherization1
-        weatherizationcount = weatherizationcount + 1
-    if item[1] == '1' and item[2] == 2 and weatherizationcount == 0:
-        ec = ec + costs.weatherization1
-        weatherizationcount = weatherizationcount + 1
-    if item[1] == '2' and item[2] == 1 and weatherizationcount == 0:
-        ec = ec + costs.weatherization1
-        weatherizationcount = weatherizationcount + 1
-    if item[1] == '2' and item[2] == 2 and weatherizationcount == 0:
-        ec = ec + costs.weatherization1
-        weatherizationcount = weatherizationcount + 1
-    if item[2] == '1' and weatherizationcount == 0:
-        ec = ec + costs.weatherization1
-    if item[2] == '2' and weatherizationcount == 0:
-        ec = ec + costs.weatherization1
+    #if item[1] == '2' and item[2] == 3 and replaceheatcount == 0:
+    #    ec = ec + (costs.btu*squarefootage)
+    #    replaceheatcount = replaceheatcount + 1
+    #if item[1] == '2' and item[2] == 4 and replaceheatcount == 0:
+    #   ec = ec + (costs.btu*squarefootage)
+    #    replaceheatcount = replaceheatcount + 1
+    #if item[1] == '1' and item[2] == 1 and weatherizationcount == 0:
+    #    ec = ec + costs.weatherization1
+    #    weatherizationcount = weatherizationcount + 1
+    #if item[1] == '1' and item[2] == 2 and weatherizationcount == 0:
+    #    ec = ec + costs.weatherization1
+    #    weatherizationcount = weatherizationcount + 1
+    #if item[1] == '2' and item[2] == 1 and weatherizationcount == 0:
+    #    ec = ec + costs.weatherization1
+    #    weatherizationcount = weatherizationcount + 1
+    #if item[1] == '2' and item[2] == 2 and weatherizationcount == 0:
+    #    ec = ec + costs.weatherization1
+    #    weatherizationcount = weatherizationcount + 1
+    #if item[2] == '1' and weatherizationcount == 0:
+    #    ec = ec + costs.weatherization1
+    #if item[2] == '2' and weatherizationcount == 0:
+    #    ec = ec + costs.weatherization1
 
     if item[3] == '1' and serviceacequipmentcount == 0:
         #print ("Service AC Equipment")
