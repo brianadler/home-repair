@@ -40,11 +40,10 @@ repairfloorcount = 0
 serviceacequipmentcount = 0
 
 def check_serviceheatingequipment(x):
-    if x["Q1"] == "1": return True
-    if x["Q2"] == "1" and x["Q3"] == "3": return True
-    if x["Q2"] == "1" and x["Q3"] == "4": return True
-    return False
-
+    if x["Q1"] == "1": return costs.serviceheatingequipment
+    if x["Q2"] == "1" and x["Q3"] == "3": return costs.serviceheatingequipment
+    if x["Q2"] == "1" and x["Q3"] == "4": return costs.serviceheatingequipment
+    return 0
 
 def check_replaceheatingeuipment(x):
     if x["Q1"] == "2": return True
@@ -52,19 +51,16 @@ def check_replaceheatingeuipment(x):
     if x["Q2"] == "2" and x["Q3"] == "4": return True
     return False
 
-
 def check_weatherization1(x):
     if x["Q3"] == "1": return True
     if x["Q3"] == "2": return True
     return False
-
 
 def check_serviceacequipment(x):
     if x["Q4"] == "1": return True
     if x["Q5"] == "1" and x["Q3"] == "3": return True
     if x["Q5"] == "1" and x["Q3"] == "4": return True
     return False
-
 
 def check_replaceacequipment(x):
     if x["Q4"] == "2": return True
@@ -73,12 +69,10 @@ def check_replaceacequipment(x):
     if x["Q5"] == "2" and x["Q3"] == "4": return True
     return False
 
-
 def check_wireforelectric(x):
     if x["Q6"] == "1": return True
     if x["Q6"] == "2": return True
     return False
-
 
 def check_installelectricplugs(x):
     if x["Q7"] == '1': return True
@@ -87,42 +81,35 @@ def check_installelectricplugs(x):
     if x["Q10"] == '2': return True
     return False
 
-
 def check_concealwiring(x):
     if x["Q8"] == '1': return True # multiplier
     if x["Q8"] == '2': return True
     return False
-
 
 def check_minorelectrical(x):
     if x["Q9"] == '1': return True # ec = ec + (costs.minorelectrical * 1.5)
     if x["Q9"] == '2': return True # ec = ec + (costs.minorelectrical * 3)
     return False
 
-
 def check_upgradeelectricservice(x):
     if x["Q11"] == '1' and x["Q12"] == '1': return True
     if x["Q11"] == '2' and x["Q12"] == '1': return True
     return False
-
 
 def check_replacebreaker(x):
     if x["Q11"] == '1' and x["Q12"] == '2': return True
     if x["Q11"] == '2' and x["Q12"] == '2': return True
     return False
 
-
 def check_moldremediation(x):
     if x["Q13"] == '1': return True
     if x["Q13"] == '2': return True
     return False
 
-
 def check_repairtoilet(x):
     if x["Q14"] == '1': return True
     if x["Q14"] == '2': return True
     return False
-
 
 def check_replacepiping(x):
     if x["Q15"] == '1': return True
@@ -135,22 +122,18 @@ def check_replacepiping(x):
     if x["Q28"] == '2': return True
     return False
 
-
 def check_replacewaterheater(x):
     if x["Q16"] == '1': return True
     if x["Q16"] == '2': return True
     return False
 
-
 def check_snakeaugerline(x):
     if x["Q17"] == '1': return True
     return False
 
-
 def check_repairsewerline(x):
     if x["Q17"] == '2': return True
     return False
-
 
 def check_snakeaugerdrane(x):
     if x["Q18"] == '1': return True
@@ -159,13 +142,11 @@ def check_snakeaugerdrane(x):
     if x["Q29"] == '2': return True
     return False
 
-
 def check_exterminatetermite(x):
     if x["Q20"] == '1': return True
     if x["Q20"] == '2': return True
     if x["Q21"] == '2': return True
     return False
-
 
 def check_exterminateseal(x):
     if x["Q21"] == '2': return True
@@ -185,9 +166,9 @@ def check_sealwindow(x):
 #ec = ec + (roofsquarefootage * costs.sealroofmultiplier
 
 def check_sealroof(x):
-    if x["Q24"] == '1': return True
-    if x["Q24"] == '2': return True
-    return False
+    if x["Q24"] == '1': return x["building_square_footage"] * 1.25 * 0.05 * costs.sealroofmultiplier
+    if x["Q24"] == '2': return x["building_square_footage"] * 1.25 * 0.05 * costs.sealroofmultiplier
+    return 0
 
 def check_repairwallsreplacepiping(x):
     if x["Q26"] == '1': return True
@@ -205,7 +186,6 @@ def check_repairfoundation(x):
     if x["Q30"] == '1': return True
     if x["Q30"] == '2': return True
     return False
-
 
 def check_repairroof(x):
     if x["Q31"] == '1': return True
@@ -252,6 +232,8 @@ def check_replacewindow(x):
 def check_repairfloor(x):
     if x["Q39"] == '1': return True
     if x["Q39"] == '2': return True
+    if x["Q44"] == '1': return True
+    if x["Q44"] == '2': return True
     return False
 
 def check_repairinteriorwall(x):
@@ -264,11 +246,6 @@ def check_repairinteriorwall(x):
 def check_repaintingwindowsashes(x):
     if x["Q43"] == '1': return True
     if x["Q43"] == '2': return True
-    return False
-
-def check_repairfloor(x):
-    if x["Q44"] == '1': return True
-    if x["Q44"] == '2': return True
     return False
 
 def check_repairfloortoiletsink(x):
@@ -311,32 +288,53 @@ def check_repairadditionalstructure(x):
     if x["Q52"] == '2': return True
     return False
 
-    serviceheatcount = 0
-    replaceheatcount = 0
-    weatherizationcount = 0
-    upgradeelectriccount = 0
-    replacebreakercount = 0
-    electricplugcount = 0
-    replacepipingcount = 0
-    snakeaugercount = 0
-    exterminatorcount = 0
-    repaintingcount=0
-    repairinteriorwallcount = 0
-    repairfloorcount = 0
-
-    #Leave out the imaginary number portion of the estimated cost with.real
-    if np.isnan(ec):
-        ec = 0
-    x[4] = float(ec.real)
-    TotalCost = TotalCost + ec
-    ec = 0
-
 outputdf = pd.DataFrame(stringarr2)
 
 ## Set Columns
 df["serviceheatingequipment"] = df.apply(check_serviceheatingequipment, axis=1)
 df["replaceheatingequipment"] = df.apply(check_replaceheatingeuipment, axis=1)
 df["weatherization1"] = df.apply(check_weatherization1, axis=1)
+df["serviceacequipment"] = df.apply(check_serviceacequipment, axis=1)
+df["replaceacequipment"] = df.apply(check_replaceacequipment, axis=1)
+df["wireforelectric"] = df.apply(check_wireforelectric, axis=1)
+df["installelectricplugs"] = df.apply(check_installelectricplugs, axis=1)
+df["concealwiring"] = df.apply(check_concealwiring, axis=1)
+df["minorelectrical"] = df.apply(check_minorelectrical, axis=1)
+df["upgradeelectricservice"] = df.apply(check_upgradeelectricservice, axis = 1)
+df["replacebreaker"] = df.apply(check_replacebreaker, axis=1)
+df["moldremediation"] = df.apply(check_moldremediation, axis=1)
+df["repairtoilet"] = df.apply(check_repairtoilet, axis=1)
+df["replacepiping"] = df.apply(check_replacepiping, axis=1)
+df["replacewaterheater"] = df.apply(check_replacewaterheater, axis=1)
+df["snakeaugerline"] = df.apply(check_snakeaugerline, axis=1)
+df["repairsewerline"] = df.apply(check_repairsewerline, axis=1)
+df["snakeaugerdrane"] = df.apply(check_snakeaugerdrane, axis=1)
+df["exterminatetermite"] = df.apply(check_exterminatetermite, axis=1)
+df["exterminateseal"] = df.apply(check_exterminateseal, axis=1)
+df["sealbasement"] = df.apply(check_sealbasement, axis=1)
+df["sealwindow"] = df.apply(check_sealwindow, axis=1)
+df["sealroof"] = df.apply(check_sealroof, axis=1)
+df["repairwallsreplacepiping"] = df.apply(check_repairwallsreplacepiping, axis=1)
+df["replacewaterheater"] = df.apply(check_replacewaterheater, axis=1)
+df["repairfoundation"] = df.apply(check_repairfoundation, axis=1)
+df["repairroof"] = df.apply(check_repairroof, axis=1)
+df["replaceroof"] = df.apply(check_replaceroof, axis=1)
+df["replacegutters"] = df.apply(check_replacegutters, axis=1)
+df["tuckpointing"] = df.apply(check_tuckpointing, axis=1)
+df["repainting"] = df.apply(check_repainting, axis=1)
+df["replaceexteriorwall"] = df.apply(check_replaceexteriorwall, axis=1)
+df["replacewindow"] = df.apply(check_replacewindow, axis=1)
+df["repairfloor"] = df.apply(check_repairfloor, axis=1)
+df["repairinteriorwall"] = df.apply(check_repairinteriorwall, axis=1)
+df["repaintingwindowsashes"] = df.apply(check_repaintingwindowsashes, axis=1)
+df["repairfloortoiletsink"] = df.appy(check_repairfloortoiletsink, axis=1)
+df["replaceinstalllocks"] = df.apply(check_replaceinstalllocks, axis=1)
+df["treeremovalpruning"] = df.apply(check_treeremovalpruning, axis=1)
+df["repairexternalwalkway"] = df.apply(check_repairexternalwalkway, axis=1)
+df["repairpatio"] = df.apply(check_repairpatio, axis=1)
+df["repairporchdeck"] = df.apply(check_repairporchdeck, axis=1)
+df["repairexternalstairway"] = df.apply(check_repairexternalstairway, axis=1)
+df["repairadditionalstructure"] = df.apply(check_repairadditionalstructure, axis=1)
 
 xlsxfile = 'CEOutput.xls'
 excel_writer = pd.ExcelWriter(xlsxfile, engine='xlsxwriter')
