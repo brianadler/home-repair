@@ -112,6 +112,8 @@ def check_replacepiping(x):
 def check_replacewaterheater(x):
     if x["Q16"] == '1': return costs.replacewaterheater
     if x["Q16"] == '2': return costs.replacewaterheater
+    if x["Q27"] == '1': return costs.replacewaterheater
+    if x["Q27"] == '2': return costs.replacewaterheater
     return False
 
 def check_snakeaugerline(x):
@@ -157,11 +159,6 @@ def check_sealroof(x):
 def check_repairwallsreplacepiping(x):
     if x["Q26"] == '1': return costs.repairwallsreplacepiping
     if x["Q26"] == '2': return costs.repairwallsreplacepiping
-    return False
-
-def check_replacewaterheater(x):
-    if x["Q27"] == '1': return costs.replacewaterheater
-    if x["Q27"] == '2': return costs.replacewaterheater
     return False
 
 def check_repairfoundation(x):
@@ -263,8 +260,8 @@ def check_repairexternalstairway(x):
     return False
 
 def check_repairadditionalstructure(x):
-    if x["Q52"] == '1': return costs.repairexternalstructure
-    if x["Q52"] == '2': return costs.repairexternalstructure
+    if x["Q52"] == '1': return costs.repairadditionalstructure
+    if x["Q52"] == '2': return costs.repairadditionalstructure
     return False
 
 outputdf = pd.DataFrame(stringarr2)
@@ -294,7 +291,6 @@ df["sealbasement"] = df.apply(check_sealbasement, axis=1)
 df["sealwindow"] = df.apply(check_sealwindow, axis=1)
 df["sealroof"] = df.apply(check_sealroof, axis=1)
 df["repairwallsreplacepiping"] = df.apply(check_repairwallsreplacepiping, axis=1)
-df["replacewaterheater"] = df.apply(check_replacewaterheater, axis=1)
 df["repairfoundation"] = df.apply(check_repairfoundation, axis=1)
 df["repairroof"] = df.apply(check_repairroof, axis=1)
 df["replaceroof"] = df.apply(check_replaceroof, axis=1)
@@ -306,7 +302,7 @@ df["replacewindow"] = df.apply(check_replacewindow, axis=1)
 df["repairfloor"] = df.apply(check_repairfloor, axis=1)
 df["repairinteriorwall"] = df.apply(check_repairinteriorwall, axis=1)
 df["repaintingwindowsashes"] = df.apply(check_repaintingwindowsashes, axis=1)
-df["repairfloortoiletsink"] = df.appy(check_repairfloortoiletsink, axis=1)
+df["repairfloortoiletsink"] = df.apply(check_repairfloortoiletsink, axis=1)
 df["replaceinstalllocks"] = df.apply(check_replaceinstalllocks, axis=1)
 df["treeremovalpruning"] = df.apply(check_treeremovalpruning, axis=1)
 df["repairexternalwalkway"] = df.apply(check_repairexternalwalkway, axis=1)
@@ -315,8 +311,10 @@ df["repairporchdeck"] = df.apply(check_repairporchdeck, axis=1)
 df["repairexternalstairway"] = df.apply(check_repairexternalstairway, axis=1)
 df["repairadditionalstructure"] = df.apply(check_repairadditionalstructure, axis=1)
 
+df["TotalCost"] = df["serviceheatingequipment"] + df["replaceheatingequipment"] + df["weatherization1"] + df["serviceacequipment"] + df["replaceacequipment"] + df["wireforelectric"] + df["installelectricplugs"] + df["concealwiring"] + df["minorelectrical"] + df["upgradeelectricservice"] + df["replacebreaker"] + df["moldremediation"] + df["repairtoilet"] + df["replacepiping"] + df["replacewaterheater"] +  df["snakeaugerline"] + df["repairsewerline"] + df["snakeaugerdrane"] + df["exterminatetermite"] + df["exterminateseal"] + df["sealbasement"] + df["sealwindow"] + df["sealroof"] + df["repairwallsreplacepiping"] + df["repairfoundation"] + df["repairroof"] + df["replaceroof"] + df["replacegutters"] + df["tuckpointing"] + df["repainting"] + df["replaceexteriorwall"] + df["replacewindow"] + df["repairfloor"] + df["repairinteriorwall"] + df["repaintingwindowsashes"] + df["repairfloortoiletsink"] + df["replaceinstalllocks"] + df["treeremovalpruning"] + df["repairexternalwalkway"] + df["repairpatio"] + df["repairporchdeck"] + df["repairexternalstairway"] + df["repairadditionalstructure"]
+
 xlsxfile = 'CEOutput.xls'
 excel_writer = pd.ExcelWriter(xlsxfile, engine='xlsxwriter')
-outputdf.columns=['SurveyID','SquareFootage','NumStories','SurveyResponses','Est. Cost']
+#outputdf.columns=['SurveyID','SquareFootage','NumStories','SurveyResponses','Est. Cost']
 outputdf.to_excel(excel_writer, sheet_name="SurveyIDandCE",startrow=0, startcol=0, header = True, index=True)
 excel_writer.save()
