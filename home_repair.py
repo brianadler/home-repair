@@ -2,29 +2,71 @@ from math import sqrt
 import pandas as pd
 import numpy as np 
 
-#Read in second file with square footage and num of stories tied to survey ID
 file_name = "EXCEL_Survey 1 Returns Dataset_ALL.xlsx"
 sheet = "S1_583_RETURNS"
 answerkey = pd.read_excel(f"data/{file_name}", dtype=str, index_col="Survey_ID", sheet_name=sheet)
 costs = pd.read_csv("data/costs.csv", index_col=0, squeeze=True)
 
-#df=pd.DataFrame(answerkey, columns=['Survey_ID','building_square_footage', 'building_stories', 'Combined', 'EstCost'])
 df = answerkey
 df["building_square_footage"] = pd.to_numeric(df["building_square_footage"])
 df["building_stories"] = pd.to_numeric(df["building_stories"])
+df["year_built"] = pd.to_numeric(df["year_built"])
+df["birthdate"] = pd.to_numeric(df["birthdate"].astype(str).str[0:4])
+df["census_tract"] = pd.to_numeric(df["census_tract"])
 
-#Convert dataframes to a single dimensional array
-arr = df.to_numpy()
+def check_censustract(x):
+    north_city_tracts = [107600, 127000, 108300, 108200, 108100,107300,107200,107400,107500,109600,109700,126700, 110500, 110200, 103000, 111300, 110100, 110300, 126900, 106200,106300,106400,106700,106500,106100]
+    north_central_tracts = [105500,105400,105300,105200,105100,105198,106600,112200,112300,111200,111400,111500,127100,110400,120200,126600,125700]
+    central_corridor_tracts = [112100,112400,118100,118600,119101,119102,119200,111100,119300,121200,121100,118400,127500,127400,125500,125600]
+    south_central_tracts = [104200,104500,117100,117200,127300,123100,123200,127600]
+    south_city_tracts = [126800,103600,113500,103400,103700,127200,103800,103100,114102,114101,114200,127200,114300,102200,102100,102300,102500,102400,115100,115200,116200,116100,115300,115400,101300,101200,101100,101500,101800,101400,115500,115600,115700,116301,116302,116400,116500,117400,124200,124100,123300,124300,124600]
+    if x["census_tract"] in north_city_tracts: return "North City"
+    if x["census_tract"] in north_central_tracts: return "North Central Corridor"
+    if x["census_tract"] in central_corridor_tracts: return "Central Corridor" 
+    if x["census_tract"] in south_central_tracts: return "South Central Corridor"
+    if x["census_tract"] in south_city_tracts: return "South City"
 
-#Convert arrays to type string to process by character later in code
-stringarr2 = arr.astype(str)
+def check_centralair(x):
+    if x["Q4"] == '4': return "No Central Air"
+    if x["Q5"] == '4': return "No Central Air"
+    return "NA"
 
-count = 0
-ec = 0
+def check_timeinhome(x):
+    if x["Q55"] == '1': return "26+"
+    if x["Q55"] == '2': return "11-25"
+    if x["Q55"] == '3': return "10-"
 
-#introduce cost figures
-averagesize = 1390
-TotalCost = 0
+def check_surveyedrace(x):
+    if x["Q62"] == '1': return "American Indian / Alaskan Native"
+    if x["Q62"] == '2': return "Asian / Pacific Islander"
+    if x["Q62"] == '3': return "Black / African American"
+    if x["Q62"] == '4': return "White / Caucasian"
+    if x["Q62"] == '5': return "Other"
+
+def check_surveyedethnicity(x):
+    if x["Q61"] == '1': return "Hispanic or Latino"
+    if x["Q61"] == '2': return "Not Hispanic or Latino"
+    if x["Q61"] == '3': return "Unknown or Prefer not to Say"
+    
+def check_surveyedincome(x):
+    if x["Q59"] == '1': return "17,400 or less"
+    if x["Q59"] == '2': return "Between 17,401 and 29,050"
+    if x["Q59"] == '3': return "Between 29,051 and 46,450"
+    if x["Q59"] == '4': return "Between 46,451 and 69,650"
+    if x["Q59"] == '5': return "69,651 or more"    
+
+def check_buildingage(x):
+    return 2022 - x["year_built"]
+
+def check_respondentage(x):
+    return 2022 - x["birthdate"]
+
+def check_uncomfortablywarmorcold(x):
+    if x["Q2"] == "1": return "Uncomfortably Cold"
+    if x["Q2"] == "2": return "Uncomfortably Cold"
+    if x["Q3"] == "1": return "Uncomfortably Cold"
+    if x["Q3"] == "2": return "Uncomfortably Cold"
+    return "NA"
 
 def check_serviceheatingequipment(x):
     if x["Q1"] == "1": return costs.serviceheatingequipment
@@ -308,8 +350,16 @@ df["repairpatio"] = df.apply(check_repairpatio, axis=1)
 df["repairporchdeck"] = df.apply(check_repairporchdeck, axis=1)
 df["repairexternalstairway"] = df.apply(check_repairexternalstairway, axis=1)
 df["repairadditionalstructure"] = df.apply(check_repairadditionalstructure, axis=1)
-
 df["TotalCost"] = df["serviceheatingequipment"] + df["replaceheatingequipment"] + df["weatherization1"] + df["serviceacequipment"] + df["replaceacequipment"] + df["wireforelectric"] + df["installelectricplugs"] + df["concealwiring"] + df["minorelectrical"] + df["upgradeelectricservice"] + df["replacebreaker"] + df["moldremediation"] + df["repairtoilet"] + df["replacepiping"] + df["replacewaterheater"] +  df["snakeaugerline"] + df["repairsewerline"] + df["snakeaugerdrane"] + df["exterminatetermite"] + df["exterminateseal"] + df["sealbasement"] + df["sealwindow"] + df["sealroof"] + df["repairwallsreplacepiping"] + df["repairfoundation"] + df["repairroof"] + df["replaceroof"] + df["replacegutters"] + df["tuckpointing"] + df["repainting"] + df["replaceexteriorwall"] + df["replacewindow"] + df["repairfloor"] + df["repairinteriorwall"] + df["repaintingwindowsashes"] + df["repairfloortoiletsink"] + df["replaceinstalllocks"] + df["treeremovalpruning"] + df["repairexternalwalkway"] + df["repairpatio"] + df["repairporchdeck"] + df["repairexternalstairway"] + df["repairadditionalstructure"]
+df["buildingage"] = df.apply(check_buildingage, axis=1)
+df["respondentage"] = df.apply(check_respondentage, axis=1)
+df["surveyedrace"] = df.apply(check_surveyedrace, axis = 1)
+df["surveyedincome"] = df.apply(check_surveyedincome, axis = 1)
+df["surveyedethnicity"] = df.apply(check_surveyedethnicity, axis = 1)
+df["timeinhome"] = df.apply(check_timeinhome, axis=1)
+df["CityDistrct"] = df.apply(check_censustract, axis=1)
+df["CentralAir?"] = df.apply(check_centralair, axis=1)
+df["UncomfortablyWarmOrCold"] = df.apply(check_uncomfortablywarmorcold, axis=1)
 
 outputdf = pd.DataFrame(df)
 xlsxfile = 'CEOutput.xls'
